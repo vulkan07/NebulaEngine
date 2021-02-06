@@ -20,7 +20,7 @@ public class Item {
     public static final int HOE = 6;
 
     public static final int[][] PICKAXE_BREAKS = { {4,2},{5,4},{6,2},{7,2} }; //[ON WHAT] [GIVE WHAT]
-    public static final int[][] AXE_BREAKS = { {2, 3} };                      //Same as pick
+    public static final int[][] AXE_BREAKS = { {3, 1} };                      //Same as pick
     public static final int[] HOE_AFFECTS_ON = { 1 };                         //GROUND -> FARM
 
     public BufferedImage texture;

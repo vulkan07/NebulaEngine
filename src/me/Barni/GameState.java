@@ -54,7 +54,9 @@ public class GameState extends State {
     @Override
     public void tick() {
         ticks++;
-        player.tick();
+
+        for (Entity e : map.entities) {e.tick();}
+
         player.getInventory().selected = game.keyManager.pressedNum-1 == -1 ? 9 : game.keyManager.pressedNum-1;
 
         if (game.keyManager.pressedKeys[81]) {player.getInventory().hotbarContent[player.getInventory().selected].setId(0);}
@@ -150,7 +152,7 @@ public class GameState extends State {
         map.entities.add(player);
 
 
-        anim = new Animator(4, "grass.png", player, game);
+        anim = new Animator(4, "player.png", player, game);
 
         Thread t = new Thread(anim);
         t.start();

@@ -138,7 +138,7 @@ public class Camera {
         for (Entity e : map.entities) {
             g.drawImage(e.texture, e.x-scrollX, e.y-scrollY, e.width*zoom, e.height*zoom, null);
             g.setColor(Color.RED);
-            g.drawRect(e.x-scrollX,e.y-scrollY,e.hitBox.width*zoom,e.hitBox.height*zoom);
+            //g.drawRect(e.x-scrollX,e.y-scrollY,e.hitBox.width*zoom,e.hitBox.height*zoom);
 
 
         }

@@ -80,8 +80,8 @@ public class Animator implements Runnable {
             current = current+1 > frames ? 0 : current+1;
                 try {
                     e.texture = images[current];
-                    int posX = e.centerX / game.ts.tileSize/game.map.camera.zoom;
-                    int posY = e.centerY / game.ts.tileSize/game.map.camera.zoom;
+                    int posX = e.centerX /( game.ts.tileSize/game.map.camera.zoom);
+                    int posY = e.centerY /( game.ts.tileSize/game.map.camera.zoom);
 
                     System.out.println(posX + ", "+ posY);
 
