@@ -1,12 +1,9 @@
 package me.Barni;
 
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.io.IOException;
 
 
 public class Camera {
@@ -16,8 +13,8 @@ public class Camera {
 
     private BufferedImage[] textures;
 
-
-    public boolean needToRender = true;
+    //private boolean needToRenderEntities;
+    //public boolean needToRenderTiles;
     public Game game;
     public Map map;
     public TileSheet ts;
@@ -25,7 +22,7 @@ public class Camera {
     public Camera(Game game, Map map, TileSheet ts) {
 
         this.ts = ts;
-        this.zoom = 2;
+        this.zoom = 1;
         this.scrollX = 0;
         this.scrollY = 0;
         zoom2 = zoom;
@@ -36,17 +33,17 @@ public class Camera {
 
     }
 
-    public void checkRenderNeed()
+    /*public void checkRenderNeed()
     {
         if (zoom == zoom2 && scrollX == scrollX2 && scrollY == scrollY2 && game.gameState.player.velocityX==0 &&game.gameState.player.velocityY==0)
         {
-            needToRender = false;
-        } else {needToRender = true;}
+            needToRenderTiles = false;
+        } else {needToRenderTiles = true;}
 
         zoom2 = zoom;
         scrollX2 = scrollX;
         scrollY2 = scrollY;
-    }
+    }*/
 
     public void scrollTiles(BufferedImage renderedImg, int vert, int horiz) {
         int[] pixels = ((DataBufferInt) renderedImg.getRaster().getDataBuffer()).getData();
@@ -59,7 +56,6 @@ public class Camera {
             }
         }
     }
-
         //HORIZ
         /*for (int x = 0; x < renderedImg.getHeight(); x++)
         {
@@ -72,8 +68,7 @@ public class Camera {
         }*/
 
 
-
-
+    /**PRELOADS TEXTURES INTO AN ARRAY(textures) FOR FASTER ACCESS**/
     public void cacheTextures()
     {
         textures = new BufferedImage[Tile.textureOffset.length];
@@ -91,9 +86,7 @@ public class Camera {
     public void renderTiles(BufferedImage image, int x1, int y1, int x2, int y2, boolean forced)
     {
 
-
-        //renderMouse(image);
-        if (!needToRender && !forced) {return;}
+        //if (!needToRenderTiles && !forced) {return;}
 
         Graphics g = image.getGraphics();
         int scale = (ts.tileSize * zoom);
@@ -116,31 +109,19 @@ public class Camera {
                     //textures[map.tiles[x][y].id]
                     g.drawImage(textures[map.tiles[x][y].id], realX, realY, scale, scale, null);
                 }
-
-                /*if (map.tiles[x][y] == 0)
-                {
-                    g.fillRect(realX,realY,scale,scale);
-                } else {
-                    g.drawImage(textures[map.tiles[x][y]], realX, realY, scale, scale, null);
-                }*/
             }
         }
+        //needToRenderTiles = false;
+        //needToRenderEntities = true;
     }
 
 
 
-    public void renderEntities(BufferedImage image, boolean forced)
+    public void renderEntities(BufferedImage image)
     {
-        game.gameState.player.getInventory().render(image);
-        if (!needToRender && !forced) {return;}
-        Graphics g = image.getGraphics();
-
         for (Entity e : map.entities) {
-            g.drawImage(e.texture, e.x-scrollX, e.y-scrollY, e.width*zoom, e.height*zoom, null);
-            g.setColor(Color.RED);
-            //g.drawRect(e.x-scrollX,e.y-scrollY,e.hitBox.width*zoom,e.hitBox.height*zoom);
-
-
+            e.render(image);
         }
+        //needToRenderEntities = false;
     }
 }

@@ -11,7 +11,6 @@ public class Map {
     public Game game;
 
     public ArrayList<Entity> entities = new ArrayList<>();
-    //public int[][] tiles = new int[worldSize][worldSize];
     public Tile[][] tiles = new Tile[worldSize][worldSize];
 
 
@@ -30,7 +29,7 @@ public class Map {
             {
                 int type = types[r.nextInt(types.length)];
                 type = r.nextInt(450) == 1 ? 5 : type;
-                tiles[x][y] = new Tile(type, game.ts);
+                tiles[x][y] = new Tile(type, game.ts, this);
             }
         }
 
@@ -53,7 +52,7 @@ public class Map {
                 String[] line = a.readLine().split("\\,");
                 for (int y = 0; y < mapSize; y++)
                 {
-                    tiles[y][x] = new Tile(Integer.parseInt(line[y]), game.ts);
+                    tiles[y][x] = new Tile(Integer.parseInt(line[y]), game.ts, this);
                 }
             }
 

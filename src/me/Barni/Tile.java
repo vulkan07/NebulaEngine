@@ -26,7 +26,7 @@ public class Tile {
 
     public final int SIZE = 32;
 
-
+    public Map map;
     public TileSheet ts;
     //public BufferedImage texture;
 
@@ -42,8 +42,9 @@ public class Tile {
     public int id;
     public boolean isHovered, isClicked;
 
-    public Tile(int type, TileSheet ts)
+    public Tile(int type, TileSheet ts, Map m)
     {
+        this.map = m;
         this.ts = ts;
         //this.texture = ts.getTileTextureAt( Tile.textureOffset[type][1], Tile.textureOffset[type][0], 1);;
         this.id = type;

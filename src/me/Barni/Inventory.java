@@ -8,19 +8,23 @@ import java.io.IOException;
 
 public class Inventory {
 
-    public BufferedImage hotbarTexture, selectedFrame;
+    public BufferedImage hotbarTexture, selectedFrame, buffer;
     public Item[] hotbarContent = new Item[10];
     public final int HOTBAR_SIZE = 10;
+
     public int selected;
+    private int prevSelected;
     public Game game;
     public Player owner;
 
+    public boolean needToUpdate = true;
 
     public Inventory(Game game, Player p)
     {
         owner = p;
         this.game = game;
         BufferedImage hotbarFrame= null;
+
 
         try {
 
@@ -37,38 +41,70 @@ public class Inventory {
             hotbarContent[i] = new Item(0);
             g.drawImage(hotbarFrame, hotbarFrame.getWidth()*i, 0, null);
         }
+        g.dispose();
+        buffer = new BufferedImage(hotbarTexture.getWidth(), hotbarTexture.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
     }
 
     public void render(BufferedImage img)
     {
+        if (selected != prevSelected){
+            prevSelected = selected;
+            needToUpdate = true;
+        }
 
-        Graphics g = img.getGraphics();
-        g.drawImage(hotbarTexture, game.WIDTH/2-hotbarTexture.getWidth()/2, game.HEIGHT - hotbarTexture.getHeight()*2, null);
-        g.drawImage(
+
+        //If not need to render, return a buffer(pre-rendered inventory image)
+        if (!needToUpdate) {
+            Graphics g = img.getGraphics();
+            g.drawImage(buffer, game.WIDTH/2-buffer.getWidth()/2, game.HEIGHT - buffer.getHeight()*2, null);
+            g.dispose();
+            return;
+        }
+
+
+        buffer = new BufferedImage(hotbarTexture.getWidth(), hotbarTexture.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics bufferGraphics = buffer.getGraphics();
+
+        //Draw bar
+        bufferGraphics.drawImage(hotbarTexture, 0, 0, null);
+
+        //Draw selected frame
+        bufferGraphics.drawImage(
                 selectedFrame,
-                game.WIDTH/2-hotbarTexture.getWidth()/2+(selectedFrame.getWidth()*selected),
-                game.HEIGHT - hotbarTexture.getHeight()*2,
+                selectedFrame.getWidth()*selected,
+                0,
                 null
                 );
+        //Draw items in it
         for (int i = 0; i<HOTBAR_SIZE; i++)
         {
             if (hotbarContent[i].getId() != 0) {
-                g.drawImage(
+                bufferGraphics.drawImage(
                         hotbarContent[i].texture,
-                        game.WIDTH / 2 - hotbarTexture.getWidth() / 2 + (selectedFrame.getWidth() * i),
-                        game.HEIGHT - hotbarTexture.getHeight() * 2,
+                        selectedFrame.getWidth() * i,
+                        0,
                         null);
-                g.drawString(String.valueOf(hotbarContent[i].count), game.WIDTH / 2 - hotbarTexture.getWidth() / 2 + (selectedFrame.getWidth() * i)+5,
-                        game.HEIGHT - hotbarTexture.getHeight() * 2+15);
+
+                //Draw item amount
+                bufferGraphics.drawString(String.valueOf(hotbarContent[i].count),
+                        (selectedFrame.getWidth() * i)+5,
+                        15);
             }
         }
+        needToUpdate = false;
+        bufferGraphics.dispose();
+        //Draw it to canvas
+        Graphics g2 = img.getGraphics();
+        g2.drawImage(buffer, game.WIDTH/2-buffer.getWidth()/2, game.HEIGHT - buffer.getHeight()*2, null);
+        g2.dispose();
+
     }
 
     public boolean remove(int id)
     {
         Item item;
-
+        needToUpdate = true;
         // LEHETNE A SELECTED ALAPJÁN XD
 
         //HÁTULRÓL CSÓRJA LE
@@ -85,6 +121,7 @@ public class Inventory {
                 } else {
                     item.setId(0);
                 }
+
                 return true;
             }
 
@@ -95,6 +132,7 @@ public class Inventory {
 
     public void add(int id, int amount)
     {
+        needToUpdate = true;
         for (Item i : hotbarContent) {
             if (i.getId() == 0) {
                 i.setId(id);
@@ -111,6 +149,7 @@ public class Inventory {
             }
 
         }
+
     }
 
 }

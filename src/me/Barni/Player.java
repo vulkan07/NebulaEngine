@@ -23,11 +23,21 @@ public class Player extends Entity {
     public void setInventory(Inventory inventory) { this.inventory = inventory; }
 
     @Override
+    public void render(BufferedImage img )
+    {
+        //if (moved || inventory.needToUpdate) {
+            inventory.render(img);
+        //}
+        super.render(img);
+    }
+
+    @Override
     public void tick()
     {
-        //OWN STUFF
-        centerX = x+width/2;
-        centerY = y+height/2;
+        super.tick();
+
+        int x = getX();
+        int y = getY();
         boolean[] pressedKeys = game.keyManager.pressedKeys;
 
         //MOVE BY KEYS
@@ -68,8 +78,7 @@ public class Player extends Entity {
         }
 
         //APPLY VELOCITY
-        this.x += velocityX;
-        this.y += velocityY;
+        move(velocityX,velocityY);
 
         //DECREASE VELOCITY
 

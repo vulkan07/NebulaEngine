@@ -69,28 +69,16 @@ public class Game extends Canvas implements Runnable {
         mouse = new Mouse();
         this.addMouseListener(mouse);
 
-        this.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                Inventory inv = gameState.player.getInventory();
-                int direction =e.getWheelRotation()*-1;
+        this.addMouseWheelListener(e -> {
+            Inventory inv = gameState.player.getInventory();
+            int direction =e.getWheelRotation()*-1;
 
-                if (inv.selected == 9 && direction==1)
-                {
-                    inv.selected = 0;
-                    keyManager.pressedNum = 0;
-                }
-                if (inv.selected == 0 && direction == -1)
-                {
-                    inv.selected = 9;
-                    keyManager.pressedNum = 10;
-                } else {
-
-                    inv.selected += direction;
-                    keyManager.pressedNum += direction;
-                }
-
+            if ((inv.selected < 9 && direction == -1) || (inv.selected > 0 && direction == 1))
+            {
+                inv.selected -= direction;
+                keyManager.pressedNum -= direction;
             }
+
         });
 
         Dimension d = new Dimension(WIDTH, HEIGHT);

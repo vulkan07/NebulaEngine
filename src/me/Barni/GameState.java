@@ -1,9 +1,6 @@
 package me.Barni;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 public class GameState extends State {
@@ -27,13 +24,15 @@ public class GameState extends State {
         if (running)
         {
 
-
+            //map.camera.checkRenderNeed();
             //===== CAMERA =====\\
             //Center Camera to player
             int size = game.ts.tileSize*game.map.worldSize/map.camera.zoom;
-            map.camera.scrollX = Math.min(Math.max(0,(player.x - game.WIDTH/2 + player.width/2)), size+ game.WIDTH);
-            map.camera.scrollY = Math.min(Math.max(0,(player.y - game.HEIGHT/2 + player.height/2)), size+game.HEIGHT*3);
-            map.camera.checkRenderNeed();
+
+            map.camera.scrollX = Math.max(0,player.getX());
+            map.camera.scrollY = Math.max(0,player.getY());
+
+
 
 
             //=====  MAP  =====\\
@@ -45,7 +44,7 @@ public class GameState extends State {
                     game.HEIGHT/(game.ts.tileSize)/map.camera.zoom+y0+1, false);
 
             //===== ENTITY =====\\
-            map.camera.renderEntities(image, false);
+            map.camera.renderEntities(image);
 
 
         }
@@ -78,15 +77,6 @@ public class GameState extends State {
                 if (t.getId()==1 && selected == 2)
                 {
                     if (player.getInventory().remove(2)) t.setId(7);
-
-                    /*for (Item i : player.getInventory().hotbarContent) {
-                        if (i.getId() == 2) {
-                            i.count-=1;
-                            if (i.count==0) i.setId(0);
-                            break;
-                        }
-                        t.setId(7); //r.nextInt(2)==1?6:4
-                    }*/
                 }
             }
             //RIGHT CLICK
@@ -128,8 +118,7 @@ public class GameState extends State {
             if (game.mouse.buttons[1] || game.mouse.buttons[3])
             {
                 t.isClicked = true;
-                game.map.camera.renderTiles(image, posX, posY, posX+1, posY+1, true);
-                game.map.camera.renderEntities(image, true);
+                //game.map.camera.renderTiles(image, posX, posY, posX+1, posY+1, true);
 
             //NO CLICK
             } else
@@ -146,9 +135,9 @@ public class GameState extends State {
         player = new Player("Player",0,0, game.ts_entity.getTileTextureAt(1,0,1), game);
         Inventory inv = new Inventory(game, player);
         player.setInventory(inv);
-        player.getInventory().hotbarContent[0].setId(4);
-        player.getInventory().hotbarContent[1].setId(5);
-        player.getInventory().hotbarContent[2].setId(6);
+        player.getInventory().hotbarContent[0].setId(Item.PICKAXE);
+        player.getInventory().hotbarContent[1].setId(Item.AXE);
+        player.getInventory().hotbarContent[2].setId(Item.HOE);
         map.entities.add(player);
 
 

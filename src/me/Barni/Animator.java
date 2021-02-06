@@ -47,7 +47,7 @@ public class Animator implements Runnable {
 
         int size = fullImage.getHeight();
 
-
+        //load frames
         for (int i = 0; i < frames; i++)
         {
 
@@ -60,43 +60,36 @@ public class Animator implements Runnable {
         }
     }
 
-    public void step()
+    /*public void step()
     {
         current = current+1>frames ? 0 : current+1;
         e.texture = images[current];
-        int posX = e.centerX / game.ts.tileSize/game.map.camera.zoom;
-        int posY = e.centerY / game.ts.tileSize/game.map.camera.zoom;
+        int posX = e.centerX / game.ts.tileSize;
+        int posY = e.centerY / game.ts.tileSize;
 
 
         c.renderTiles(canvas,posX-1,posY-1,posX+1,posY+1,true);
-        c.renderEntities(canvas, true);
-    }
+        c.renderEntities(canvas);
+    }*/
 
     @Override
     public void run() {
 
         while (true)
         {
-            current = current+1 > frames ? 0 : current+1;
-                try {
-                    e.texture = images[current];
-                    int posX = e.centerX /( game.ts.tileSize/game.map.camera.zoom);
-                    int posY = e.centerY /( game.ts.tileSize/game.map.camera.zoom);
+            //STEP FRAME
+            current = current+1 < frames ? current+1 : 0;
+            //CHANGE TEXTURE
+            e.texture = images[current];
+            e.textureUpdated = true;
 
-                    System.out.println(posX + ", "+ posY);
+            //DELAY
+            try {
+                Thread.sleep(delays[current]);
+            } catch (InterruptedException ie) {}
 
-                    c.renderTiles(canvas,posX-1,posY-1,posX+1,posY+1,true);
-                    c.renderEntities(canvas, true);
-
-
-
-                    Thread.sleep(delays[current]);
-                } catch (InterruptedException ie) { }
-                catch (ArrayIndexOutOfBoundsException aioobe) {}
-
-                while ( !playing ) {}
-            }
+            while ( !playing ) {}
         }
-
     }
+}
 
