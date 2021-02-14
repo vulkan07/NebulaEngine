@@ -43,26 +43,29 @@ public class Player extends Entity {
         //MOVE BY KEYS
         if (pressedKeys[87]) {
 
-            if (y > 0)
+            if (y > 0) {
                 this.velocityY -= this.speed; //FEL
-            else
+                this.toBeFaced = 1;
+            } else
                 y = 0;
         }
 
         if (pressedKeys[83]) {
 
-            if (y < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - height*2)
+            if (y < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - height*2) {
                 this.velocityY += this.speed; //LE
+                this.toBeFaced = 3;
+            }
             else
-                {
                     y = game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - height*2;
-                }
         }
 
         if (pressedKeys[65]) {
 
-            if (x > 0)
+            if (x > 0) {
                 this.velocityX -= this.speed; //BALRA
+                toBeFaced = 4;
+            }
             else
                 x = 0;
 
@@ -70,12 +73,13 @@ public class Player extends Entity {
 
         if (pressedKeys[68]) {
 
-            if (x < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width*2)
-                this.velocityX += this.speed; //JOBBRA
-            else
+            if (x < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width * 2)  {
+                this.velocityX += this.speed;
+                toBeFaced = 2;
+            } //JOBBRA
+        } else
                 x = game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width*2;
 
-        }
 
         //APPLY VELOCITY
         move(velocityX,velocityY);
@@ -84,5 +88,6 @@ public class Player extends Entity {
 
         this.velocityX -= velocityX < 0 ? Math.min(0, velocityX+velocityX/-2) : Math.max(0, velocityX-velocityX/2);
         this.velocityY -= velocityY < 0 ? Math.min(0, velocityY+velocityY/-2) : Math.max(0, velocityY-velocityY/2);
+
     }
 }

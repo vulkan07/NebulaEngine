@@ -10,6 +10,8 @@ public class GameState extends State {
     public Player player;
     Random r;
     Animator anim;
+    int breakCount;
+
 
     public GameState(Game game, BufferedImage renderCanvas, Map m, TileSheet ts)
     {
@@ -28,9 +30,8 @@ public class GameState extends State {
             //===== CAMERA =====\\
             //Center Camera to player
             int size = game.ts.tileSize*game.map.worldSize/map.camera.zoom;
-
-            map.camera.scrollX = Math.max(0,player.getX());
-            map.camera.scrollY = Math.max(0,player.getY());
+            map.camera.scrollX = Math.min(Math.max(0,(player.getX() - game.WIDTH/2 + player.width/2)), size+game.WIDTH);
+            map.camera.scrollY = Math.min(Math.max(0,(player.getY() - game.HEIGHT/2 + player.height/2)), size+game.WIDTH);
 
 
 
@@ -82,35 +83,41 @@ public class GameState extends State {
             //RIGHT CLICK
             else if (game.mouse.buttons[3]) {
 
+                if (breakCount<20)
+                {
+                    breakCount++;
+                } else {
+                    breakCount=0;
+                    //PICKAXE
+                    if (selected == 4)
+                        for (int[] a : Item.PICKAXE_BREAKS)
+                        {
+                            if (t.getId() == a[0]) {
+                                t.setId(1);
 
-                //PICKAXE
-                if (selected == 4)
-                    for (int[] a : Item.PICKAXE_BREAKS)
-                    {
-                        if (t.getId() == a[0]) {
-                            t.setId(1);
-                            player.getInventory().add(a[1], 1);
+                                player.getInventory().add(a[1], 1);
+                            }
                         }
-                    }
-                //AXE
-                if (selected == 5)
-                    for (int[] a : Item.AXE_BREAKS)
-                    {
-                        if (t.getId() == a[0]) {
-                            t.setId(1);
-                            player.getInventory().add(a[1], 1);
+                    //AXE
+                    if (selected == 5)
+                        for (int[] a : Item.AXE_BREAKS)
+                        {
+                            if (t.getId() == a[0]) {
+                                t.setId(1);
+                                player.getInventory().add(a[1], 1);
+                            }
                         }
+
+                    //HOE
+                    if (selected == 6)
+                        for (int a : Item.HOE_AFFECTS_ON)
+                            if (t.getId() == a) t.setId(Tile.FARM);
+
+                    //HAND
+                    if (t.getId()==2) {
+                        t.setId(1);
+                        player.getInventory().add(3,r.nextInt(3)+1);
                     }
-
-                //HOE
-                if (selected == 6)
-                    for (int a : Item.HOE_AFFECTS_ON)
-                        if (t.getId() == a) t.setId(Tile.FARM);
-
-                //HAND
-                if (t.getId()==2) {
-                    t.setId(1);
-                    player.getInventory().add(3,r.nextInt(3)+1);
                 }
             }
 
@@ -122,7 +129,7 @@ public class GameState extends State {
 
             //NO CLICK
             } else
-                { t.isClicked = false; }
+                { t.isClicked = false; breakCount=0;}
 
 
         } catch (ArrayIndexOutOfBoundsException ex) {}

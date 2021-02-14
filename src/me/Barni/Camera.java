@@ -25,6 +25,7 @@ public class Camera {
         this.zoom = 1;
         this.scrollX = 0;
         this.scrollY = 0;
+        zoom = 1;
         zoom2 = zoom;
         scrollX2 = scrollX;
         scrollY2 = scrollY;
