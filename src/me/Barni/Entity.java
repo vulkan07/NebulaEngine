@@ -69,7 +69,7 @@ public abstract class Entity {
 
         int scale = game.map.camera.zoom;
 
-        if (textureUpdated || moved) { rotate(); textureRotated=false;}
+        //if (textureUpdated || moved) { rotate(); textureRotated=false;}
 
         img.getGraphics().drawImage(texture, x-game.map.camera.scrollX, y-game.map.camera.scrollY, width*scale, height*scale, null);
         textureUpdated = false;

@@ -7,11 +7,9 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Entity {
 
-    int speed, velocityX, velocityY;
-
-
-
-    private Inventory inventory;
+    final float gravity = 1f;
+    float speed, velocityX, velocityY, jumpForce;
+    boolean isOnGround, canJump = true;
 
     public Player(String name, int x, int y, BufferedImage texture, Game g) {
         super(name, x, y, texture, g);
@@ -19,16 +17,11 @@ public class Player extends Entity {
         hitBox = new Rectangle(0,0,width,height);
     }
 
-    public Inventory getInventory() { return inventory; }
-    public void setInventory(Inventory inventory) { this.inventory = inventory; }
-
     @Override
     public void render(BufferedImage img )
     {
-        //if (moved || inventory.needToUpdate) {
-            inventory.render(img);
-        //}
         super.render(img);
+        img.getGraphics().drawLine(getX(),getY(),getX()+(int)velocityY, getY()+(int)velocityY);
     }
 
     @Override
@@ -43,18 +36,17 @@ public class Player extends Entity {
         //MOVE BY KEYS
         if (pressedKeys[87]) {
 
-            if (y > 0) {
-                this.velocityY -= this.speed; //FEL
-                this.toBeFaced = 1;
-            } else
-                y = 0;
+            //canJump = true;
+            if (canJump) {
+                jumpForce = 10;
+            }
+            canJump = false;
         }
 
         if (pressedKeys[83]) {
 
             if (y < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - height*2) {
                 this.velocityY += this.speed; //LE
-                this.toBeFaced = 3;
             }
             else
                     y = game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - height*2;
@@ -64,7 +56,6 @@ public class Player extends Entity {
 
             if (x > 0) {
                 this.velocityX -= this.speed; //BALRA
-                toBeFaced = 4;
             }
             else
                 x = 0;
@@ -73,21 +64,65 @@ public class Player extends Entity {
 
         if (pressedKeys[68]) {
 
-            if (x < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width * 2)  {
+            if (x < game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width * 2) {
                 this.velocityX += this.speed;
-                toBeFaced = 2;
             } //JOBBRA
-        } else
-                x = game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width*2;
+            else {
+                x = game.ts.tileSize * game.map.camera.zoom * game.map.worldSize - width * 2;
+            }
+        }
 
 
-        //APPLY VELOCITY
-        move(velocityX,velocityY);
 
         //DECREASE VELOCITY
+        this.velocityX -= velocityX < 0 ? Math.min(0, velocityX+velocityX/-1.2) : Math.max(0, velocityX-velocityX/1.2);
+        this.velocityY -= velocityY < 0 ? Math.min(0, velocityY+velocityY/-1.2) : Math.max(0, velocityY-velocityY/1.2);
+        //DECREASE JUMP FORCE
+        jumpForce -= jumpForce>0 ? 1 : 0;
 
-        this.velocityX -= velocityX < 0 ? Math.min(0, velocityX+velocityX/-2) : Math.max(0, velocityX-velocityX/2);
-        this.velocityY -= velocityY < 0 ? Math.min(0, velocityY+velocityY/-2) : Math.max(0, velocityY-velocityY/2);
 
+        //APPLY GRAVITY
+        this.velocityY += gravity;
+        //APPLY JUMP FORCE
+        this.velocityY -= jumpForce;
+
+
+
+
+
+        //Test collision
+        //DOWN
+
+
+        try {
+            int[] x2 = {x, x+width, x, x+width};
+            int[] y2 = {y, y, y+width, y+width};
+
+            for (int i = 0; i <= 5; i++ ) {
+                int posX = (x2[i]) / 64;
+                int posY = (y2[i]) / 64;
+
+                //X
+                if (game.map.tiles[posX + (int) velocityX][posY].getId() == 1)
+                {
+                   velocityX = 0;
+                }
+
+
+                //Y
+                if (game.map.tiles[posX][posY + (int) velocityY].getId() == 1)
+                {
+                    velocityY = 0;
+                }
+
+                /*if (game.map.tiles[posX][posY].getId() == 1 || game.map.tiles[posX][posY].getId() == 2) {
+                    velocityX -= (x+velocityX+width)-posX*64;
+                    velocityY -= (y+velocityY+height)-posY*64;
+                }*/
+            }
+        } catch (Exception aioobEx) {}
+
+        //APPLY VELOCITY ON POSITION
+        move((int)velocityX,(int)velocityY);
     }
 }

@@ -69,18 +69,6 @@ public class Game extends Canvas implements Runnable {
         mouse = new Mouse();
         this.addMouseListener(mouse);
 
-        this.addMouseWheelListener(e -> {
-            Inventory inv = gameState.player.getInventory();
-            int direction =e.getWheelRotation()*-1;
-
-            if ((inv.selected < 9 && direction == -1) || (inv.selected > 0 && direction == 1))
-            {
-                inv.selected -= direction;
-                keyManager.pressedNum -= direction;
-            }
-
-        });
-
         Dimension d = new Dimension(WIDTH, HEIGHT);
         frame.setMaximumSize(d);
         frame.setMinimumSize(d);

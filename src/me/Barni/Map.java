@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Map {
 
-    public int worldSize = 64;
+    public int worldSize = 32;
     public Camera camera;
     public Game game;
 
@@ -20,15 +20,13 @@ public class Map {
         game = g;
         Random r = new Random();
 
-        int[] types = {1,1,1,1,1,1,1,1,1,1,1,1,2,3,4,6};
-
-
+        int type;
         for (int x = 0; x < worldSize; x++)
         {
             for (int y = 0; y < worldSize; y++)
             {
-                int type = types[r.nextInt(types.length)];
-                type = r.nextInt(450) == 1 ? 5 : type;
+                type = y>16?1:0;
+                if (y == 16) type = 2;
                 tiles[x][y] = new Tile(type, game.ts, this);
             }
         }
@@ -56,7 +54,7 @@ public class Map {
                 }
             }
 
-            System.out.println("[MAP] Loaded map:" + pathname);
+            System.out.println("[MAP] Loaded map: " + pathname);
 
         } catch (FileNotFoundException fnfEx) {
             System.out.println("Can't find map: " + pathname);
