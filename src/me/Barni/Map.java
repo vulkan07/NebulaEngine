@@ -1,8 +1,10 @@
 package me.Barni;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.XMLFormatter;
 
 public class Map {
 
@@ -12,6 +14,7 @@ public class Map {
 
     public ArrayList<Entity> entities = new ArrayList<>();
     public Tile[][] tiles = new Tile[worldSize][worldSize];
+    Rectangle[] hitboxes;
 
 
     //MAKE A MAP
@@ -30,6 +33,8 @@ public class Map {
                 tiles[x][y] = new Tile(type, game.ts, this);
             }
         }
+
+
 
     }
 
@@ -53,6 +58,25 @@ public class Map {
                     tiles[y][x] = new Tile(Integer.parseInt(line[y]), game.ts, this);
                 }
             }
+
+            hitboxes = new Rectangle[worldSize*worldSize];
+            for (int y = 0; y < worldSize; y++)
+            {
+                for (int x = 0; x < worldSize; x++)
+                {
+
+                    if (tiles[x][y].getId() != 0) {
+                        hitboxes[y+x*worldSize] = new Rectangle(x*game.ts.tileSize, y*game.ts.tileSize, game.ts.tileSize, game.ts.tileSize);
+                        System.out.print("[]");
+                    }
+                    else {
+                        hitboxes[y+x*worldSize] = null;
+                        System.out.print("  ");
+                    }
+                }
+                System.out.println();
+            }
+
 
             System.out.println("[MAP] Loaded map: " + pathname);
 

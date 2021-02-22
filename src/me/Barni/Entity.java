@@ -18,7 +18,7 @@ public abstract class Entity {
     public Game game;
     public BufferedImage texture;
     public int width, height, centerX, centerY;
-    private int x,y;
+    protected int x,y;
     public Rectangle hitBox = null;
     public boolean textureUpdated, moved, textureRotated;
 
@@ -79,8 +79,8 @@ public abstract class Entity {
 
     public void tick()
     {
-        centerX = x+width/2;
-        centerY = y+height/2;
+        centerX = x+width/2*game.cam.zoom;
+        centerY = y+height/2*game.cam.zoom;
     }
 
 }

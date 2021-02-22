@@ -7,21 +7,44 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Entity {
 
-    final float gravity = 1f;
+    final float gravity = 0.8f;
     float speed, velocityX, velocityY, jumpForce;
-    boolean isOnGround, canJump = true;
+    boolean isOnGround, canJump = true, collided;
+
+    //static Rectangle otherBox = new Rectangle(200,200,100,100);
 
     public Player(String name, int x, int y, BufferedImage texture, Game g) {
         super(name, x, y, texture, g);
-        speed = 4;
+        speed = 1;
         hitBox = new Rectangle(0,0,width,height);
     }
 
     @Override
     public void render(BufferedImage img )
     {
+
+        /*try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
         super.render(img);
-        img.getGraphics().drawLine(getX(),getY(),getX()+(int)velocityY, getY()+(int)velocityY);
+
+        Graphics g = img.getGraphics();
+        g.setColor(Color.RED);
+        //g.drawRect(otherBox.x-game.cam.scrollX, otherBox.y-game.cam.scrollY, otherBox.width, otherBox.height);
+        /*if (collided)
+            g.fillRect(x-game.cam.scrollX, y-game.cam.scrollY, width*game.cam.zoom, height*game.cam.zoom);
+        else
+            g.drawRect(x-game.cam.scrollX, y-game.cam.scrollY, width*game.cam.zoom, height*game.cam.zoom);*/
+
+        int cX = width/2*game.cam.zoom;
+        int cY = height/2*game.cam.zoom;
+
+        int x = getX()-game.cam.scrollX;
+        int y = getY()-game.cam.scrollY;
+        g.drawLine(x+cX, y+cY,x+(int)velocityX*5+cX, y+(int)velocityY*5+cY);
     }
 
     @Override
@@ -36,9 +59,8 @@ public class Player extends Entity {
         //MOVE BY KEYS
         if (pressedKeys[87]) {
 
-            //canJump = true;
             if (canJump) {
-                jumpForce = 10;
+                jumpForce = 8;
             }
             canJump = false;
         }
@@ -58,7 +80,7 @@ public class Player extends Entity {
                 this.velocityX -= this.speed; //BALRA
             }
             else
-                x = 0;
+                this.velocityX = 0;
 
         }
 
@@ -74,6 +96,7 @@ public class Player extends Entity {
 
 
 
+
         //DECREASE VELOCITY
         this.velocityX -= velocityX < 0 ? Math.min(0, velocityX+velocityX/-1.2) : Math.max(0, velocityX-velocityX/1.2);
         this.velocityY -= velocityY < 0 ? Math.min(0, velocityY+velocityY/-1.2) : Math.max(0, velocityY-velocityY/1.2);
@@ -82,47 +105,77 @@ public class Player extends Entity {
 
 
         //APPLY GRAVITY
-        this.velocityY += gravity;
+        //this.velocityY += gravity;
+
         //APPLY JUMP FORCE
         this.velocityY -= jumpForce;
 
+        collided=false;
 
 
+        for (Rectangle otherBox : game.map.hitboxes) {
 
+            if (otherBox==null) continue;
 
-        //Test collision
-        //DOWN
+            int otherCenterX = otherBox.x + otherBox.width/2;
+            int otherCenterY = otherBox.y + otherBox.height/2;
+            int vX = centerX - otherCenterX;
+            int vY = centerY - otherCenterY;
+            boolean dir = vX*vX > vY*vY;
 
+            if (y + height > otherBox.y && y < otherBox.y + otherBox.height)
+                if (x + width > otherBox.x && x < otherBox.x + otherBox.width) {
+                    collided = true;
 
-        try {
-            int[] x2 = {x, x+width, x, x+width};
-            int[] y2 = {y, y, y+width, y+width};
+                    if (dir) {
+                        if (centerX > otherCenterX) {
+                            //RIGHT
+                            if (velocityX < 0) velocityX = 0;
+                            this.x = otherBox.x + otherBox.width;
+                        } else {
+                            //LEFT
+                            if (velocityX > 0) velocityX = 0;
+                            this.x = otherBox.x - width;
+                        }
+                    } else {
+                        if (centerY > otherCenterY) {
+                            //DOWN
 
-            for (int i = 0; i <= 5; i++ ) {
-                int posX = (x2[i]) / 64;
-                int posY = (y2[i]) / 64;
-
-                //X
-                if (game.map.tiles[posX + (int) velocityX][posY].getId() == 1)
-                {
-                   velocityX = 0;
+                            if (velocityY < 0) velocityY = 0;
+                            this.y = otherBox.y + otherBox.height;
+                        } else {
+                            //UP
+                            canJump = true;
+                            if (velocityY > 0) velocityY = 0;
+                            this.y = otherBox.y - height;
+                        }
+                    }
                 }
+        }
 
 
-                //Y
-                if (game.map.tiles[posX][posY + (int) velocityY].getId() == 1)
-                {
-                    velocityY = 0;
-                }
 
-                /*if (game.map.tiles[posX][posY].getId() == 1 || game.map.tiles[posX][posY].getId() == 2) {
-                    velocityX -= (x+velocityX+width)-posX*64;
-                    velocityY -= (y+velocityY+height)-posY*64;
-                }*/
-            }
-        } catch (Exception aioobEx) {}
 
         //APPLY VELOCITY ON POSITION
         move((int)velocityX,(int)velocityY);
+
+
     }
 }
+
+
+/*
+boolean horizontal = x+width+velocityX > otherBox.x && x+width+velocityX < otherBox.x+otherBox.width;
+boolean vertical = y+height+velocityY > otherBox.y && y+height+velocityY < otherBox.y+otherBox.height;
+if ( vertical && horizontal)
+{
+    if (x+width > otherBox.x || x > otherBox.x + otherBox.width) {
+        this.x = (x + width < otherBox.x + otherBox.width / 2 ? otherBox.x - width /*bal : otherBox.x + otherBox.width/2 /*jobb);
+        velocityX = 0;
+    }
+    if (y+height > otherBox.y || y > otherBox.y + otherBox.height){
+        this.y = (y+height < otherBox.y+ otherBox.height/2 ? otherBox.y-height /*bal : otherBox.y + otherBox.height/2 /*jobb);
+        velocityY = 0;
+    }
+}
+ */

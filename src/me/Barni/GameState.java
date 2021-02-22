@@ -95,6 +95,8 @@ public class GameState extends State {
         map.entities.add(player);
         map.loadMap(game.$GAME_DIR+"test.map");
 
+        player.x = 500;
+
         anim = new Animator(4, "player.png", player, game);
 
         Thread t = new Thread(anim);
