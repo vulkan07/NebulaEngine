@@ -54,9 +54,8 @@ public class GameState extends State {
     public void tick() {
         ticks++;
 
-        for (Entity e : map.entities) {e.tick();}
+        for (Entity e : map.entities) {e.update(game.deltaTime);}
         //if (game.keyManager.pressedKeys[32]) map.loadMap("C:\\Dev\\test.txt"); I CAN LOAD A MAP!!! :D
-
 
         //MOUSE
         try {
@@ -94,8 +93,6 @@ public class GameState extends State {
         player = new Player("Player",0,0, game.ts_entity.getTileTextureAt(1,0,1), game);
         map.entities.add(player);
         map.loadMap(game.$GAME_DIR+"test.map");
-
-        player.x = 500;
 
         anim = new Animator(4, "player.png", player, game);
 

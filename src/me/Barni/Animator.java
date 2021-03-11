@@ -41,12 +41,11 @@ public class Animator implements Runnable {
 
 
         } catch (IOException ioException) {
-            System.out.println("[ANIMATOR] Can't load txt and/or .anim");
+            System.out.println("[ANIMATOR] Can't load .txt and/or .anim");
         }
 
 
         int size = fullImage.getHeight();
-
         //load frames
         for (int i = 0; i < frames; i++)
         {
@@ -54,6 +53,7 @@ public class Animator implements Runnable {
             int[] px = fullImage.getRGB(32*i,0, size, size, null,  0,size*size);
 
             BufferedImage img = new BufferedImage(fullImage.getWidth()/frames, size, BufferedImage.TYPE_INT_ARGB);
+
             img.setRGB(0,0,size, size, px, 0, size*size);
 
             images[i] = img;

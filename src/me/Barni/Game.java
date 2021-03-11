@@ -21,6 +21,8 @@ public class Game extends Canvas implements Runnable {
     public Mouse mouse;
     public GameState gameState;
 
+    public float deltaTime;
+
     private boolean running = false;
 
 
@@ -80,18 +82,21 @@ public class Game extends Canvas implements Runnable {
     public void run()
     {
 
-        int fps = 0, tickCounts = 0;
+        int fps = 0;
+        int tickCounts = 0;
         long last = System.nanoTime();
 
         double undone = 0;
-        double pertickCount = 1000000000.0/60.0;
+        double perTickCount = 1000000000.0/60.0;
         long lastMillis = System.currentTimeMillis();
 
         while (running)
         {
             //Calculate the elapsed time
             long now = System.nanoTime();
-            undone += (now-last)/pertickCount;
+            undone += (now-last)/perTickCount;
+            deltaTime = (float)((now-last)/perTickCount);
+            //System.out.println(deltaTime);
             last = now;
 
             //Catching up
@@ -101,22 +106,21 @@ public class Game extends Canvas implements Runnable {
                 undone--;
             }
 
+
             fps++;
             stepGame();
 
 
-            /*try {
+            try {
                 Thread.sleep(  (int)(undone*1000/60)  );
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
+            } catch (InterruptedException e){}
 
 
             //EVERY SECONDS:
             if (System.currentTimeMillis() - lastMillis > 1000)
             {
                 lastMillis += 1000;
-                System.out.println(tickCounts + " tickCounts, " + fps + " fps");
+                System.out.println(tickCounts + " ticks, " + fps + " fps");
                 fps = 0;
                 tickCounts = 0;
             }

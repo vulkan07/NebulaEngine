@@ -11,25 +11,24 @@ public abstract class Entity {
 
     public String name;
 
-    public int getX() {return x;}
+    public int getX() {return (int)pos.x;}
 
-    public int getY() {return y;}
+    public int getY() {return (int)pos.y;}
 
     public Game game;
     public BufferedImage texture;
-    public int width, height, centerX, centerY;
-    protected int x,y;
+    public int width, height;
+    Vec2D pos, center;
     public Rectangle hitBox = null;
-    public boolean textureUpdated, moved, textureRotated;
+    public boolean textureUpdated, moved;
 
     public short facing, toBeFaced; //1:up   2:right   3:down   4:left
 
 
-    public void move(int x2, int y2)
+    public void move(Vec2D v)
     {
-        if (x2==0 && y2==0) return;
-        x += x2;
-        y += y2;
+        if (v.x==0 && v.y==0) return;
+        pos.add(v);
         moved = true;
     }
 
@@ -37,8 +36,8 @@ public abstract class Entity {
     {
         this.name = name;
         this.game = g;
-        this.x = x;
-        this.y = y;
+        this.pos = new Vec2D(x,y);
+        this.center = new Vec2D();
         this.width = texture.getWidth();
         this.height = texture.getHeight();
         this.texture = texture;
@@ -71,16 +70,16 @@ public abstract class Entity {
 
         //if (textureUpdated || moved) { rotate(); textureRotated=false;}
 
-        img.getGraphics().drawImage(texture, x-game.map.camera.scrollX, y-game.map.camera.scrollY, width*scale, height*scale, null);
+        img.getGraphics().drawImage(texture, (int)pos.x-game.map.camera.scrollX, (int)pos.y-game.map.camera.scrollY, width*scale, height*scale, null);
         textureUpdated = false;
         moved = false;
 
     }
 
-    public void tick()
+    public void update(float dt)
     {
-        centerX = x+width/2*game.cam.zoom;
-        centerY = y+height/2*game.cam.zoom;
+        center.x = (int)pos.x+width/2*game.cam.zoom;
+        center.y = (int)pos.y+height/2*game.cam.zoom;
     }
 
 }

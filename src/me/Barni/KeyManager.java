@@ -6,7 +6,13 @@ import java.awt.event.KeyListener;
 public class KeyManager implements KeyListener {
 
     public boolean[] pressedKeys;
-    public int pressedNum = 1;
+
+    public final int KEY_UP = 87;
+    public final int KEY_DOWN = 83;
+    public final int KEY_LEFT = 65;
+    public final int KEY_RIGHT = 68;
+    public final int KEY_SPACE = 32;
+    public final int KEY_ESC = 27;
 
     public KeyManager() {pressedKeys = new boolean[256];}
 
@@ -16,10 +22,6 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         //System.out.println("Pressed: "+e.getKeyCode());
-
-        try {
-            pressedNum = Integer.parseInt(String.valueOf(e.getKeyChar()));
-        } catch (NumberFormatException ex) {}
         pressedKeys[e.getKeyCode()] = true;
     }
 

@@ -11,7 +11,7 @@ public class Tile {
 
     //========================================\\
         public static final int VOID = 0;
-        public static final int GROUND = 1;
+        public static final int BORDER = 1;
         public static final int GRASS = 2;
 
         public static final int PLANT = 3;

@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.XMLFormatter;
 
 public class Map {
 
